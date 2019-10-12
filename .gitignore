@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+.next
 /dist
 
 # local env files
@@ -19,3 +20,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+/ch1/front/node_modules/
+/ch1/front/.nuxt/
+/ch1/front/node_modules/
+/ch1/front/package-lock.json
