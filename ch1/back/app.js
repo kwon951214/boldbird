@@ -3,9 +3,10 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-    res.send('안녕 백앤드');
+    // res.send('안녕 백앤드');
+    res.status(200).send('안녕 백엔드');
 });
 
 app.listen(3085, () => {
-    console.log();
+    console.log('백엔드 서버에서 작동중');
 });
