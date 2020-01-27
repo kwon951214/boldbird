@@ -1,9 +1,12 @@
 const express = require('express');
+const cors = require('cors');
+const bcrypt = require('bcrypt');
 const db = require('./models');
 const app = express();
 
 db.sequelize.sync();
 
+app.use(cors('http://localhost:3000'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
@@ -14,10 +17,11 @@ app.get('/', (req, res) => {
 
 app.post('/user', async (req, res, next) => {
     try {
+        const hash = await bcrypt.hash(req.body.password,12);
         const newUser = await db.User.create({
             where: {
                 email: req.body.email,
-                password: req.body.password,
+                password: hash,
                 nickname: req.body.nickname
             }
         });//HTTP STATUS CODE
