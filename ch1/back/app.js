@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const db = require('./models');
 const app = express();
 
-db.sequelize.sync();
+db.sequelize.sync({ force: true });
 
 app.use(cors('http://localhost:3000'));
 app.use(express.json());
@@ -18,17 +18,26 @@ app.get('/', (req, res) => {
 app.post('/user', async (req, res, next) => {
     try {
         const hash = await bcrypt.hash(req.body.password,12);
-        const newUser = await db.User.create({
+        const exUser = db.User.findOne({
+           email: req.body.email
+        });
+        if (exUser){
+            return res.status(403).json({
+                errorCode: 1,
+                message: '이미 회원가입되어있습니다'
+            });
+        }
+        const newUser = await db.User.findOne({
             where: {
                 email: req.body.email,
                 password: hash,
                 nickname: req.body.nickname
-            }
-        });//HTTP STATUS CODE
+            }//HTTP STATUS CODE
+        });
         res.status(201).json(newUser); //문자열일땐 json말고 send
     } catch (e) {
         console.log(error);
-        next(error);
+        return next(error);
     }
 
 });
