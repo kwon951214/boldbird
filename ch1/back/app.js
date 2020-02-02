@@ -1,7 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const db = require('./models');
+const passport = require('passport');
+const session = require('express-session');
+const cookie = require('cookie-parser');
+const morgan = require('morgan');
+const passportConfig = require('./passport');
+
 const app = express();
 
 db.sequelize.sync({ force: true });
@@ -19,7 +24,9 @@ app.post('/user', async (req, res, next) => {
     try {
         const hash = await bcrypt.hash(req.body.password,12);
         const exUser = db.User.findOne({
-           email: req.body.email
+            where: {
+                email: req.body.email
+            }
         });
         if (exUser){
             return res.status(403).json({
