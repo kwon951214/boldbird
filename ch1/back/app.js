@@ -5,15 +5,27 @@ const passport = require('passport');
 const session = require('express-session');
 const cookie = require('cookie-parser');
 const morgan = require('morgan');
-const passportConfig = require('./passport');
 
+const db = require('./models');
+const passportConfig = require('./passport');
 const app = express();
 
-db.sequelize.sync({ force: true });
+db.sequelize.sync({force: true});
+passportConfig();
 
+app.use(morgan('dev'));
 app.use(cors('http://localhost:3000'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(cookie('cookiesecret'));
+app.use(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: 'cookiesecret'
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
     // res.send('안녕 백앤드');
@@ -22,13 +34,11 @@ app.get('/', (req, res) => {
 
 app.post('/user', async (req, res, next) => {
     try {
-        const hash = await bcrypt.hash(req.body.password,12);
+        const hash = await bcrypt.hash(req.body.password, 12);
         const exUser = db.User.findOne({
-            where: {
-                email: req.body.email
-            }
+            email: req.body.email
         });
-        if (exUser){
+        if (exUser) {
             return res.status(403).json({
                 errorCode: 1,
                 message: '이미 회원가입되어있습니다'
@@ -47,6 +57,32 @@ app.post('/user', async (req, res, next) => {
         return next(error);
     }
 
+});
+
+const user = {
+    'test1': 1,
+    'test2': 2,
+    'test3': 3,
+
+};
+
+app.post('/user/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error(err);
+            return next(err);
+        }
+        if (info) {
+            return res.status(401).send(info.reason);
+        }
+        return req.login(user, (err) => { //세션에 사용자 정보 저장 ->serializeuser로
+            if (err) {
+                console.error(err);
+                return next(err);
+            }
+            return res.json(user);
+        })
+    })(req, res, next);
 });
 
 app.listen(3085, () => {
