@@ -8,6 +8,7 @@ const morgan = require('morgan');
 
 const db = require('./models');
 const passportConfig = require('./passport');
+const usersRouter = require('./routes/users');
 const app = express();
 
 db.sequelize.sync({force: true});
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
     res.status(200).send('안녕 GGM');
 });
 
+app.use('/user', usersRouter);
 app.post('/user', async (req, res, next) => {
     try {
         const hash = await bcrypt.hash(req.body.password, 12);
@@ -85,6 +87,18 @@ app.post('/user/login', (req, res, next) => {
     })(req, res, next);
 });
 
+app.post('/user/logout', (req, res) => {
+    if (req.isAuthenticated()){
+        req.logout();
+        req.session.destroy();
+        return res.status(200).send('로그아웃')
+    }
+});
+app.post('/post', (req, res) => {
+    if (req.isAuthenticated()){
+
+    }
+});
 app.listen(3085, () => {
     console.log('백엔드 서버에서 작동중');
 });
