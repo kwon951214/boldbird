@@ -99,6 +99,6 @@ app.post('/post', (req, res) => {
 
     }
 });
-app.listen(3085, () => {
-    console.log('백엔드 서버에서 작동중');
-});
+// app.listen(3085, () => {
+//     console.log('백엔드 서버에서 작동중');
+// });
