@@ -88,17 +88,17 @@ app.post('/user/login', (req, res, next) => {
 });
 
 app.post('/user/logout', (req, res) => {
-    if (req.isAuthenticated()){
+    if (req.isAuthenticated()) {
         req.logout();
         req.session.destroy();
         return res.status(200).send('로그아웃')
     }
 });
 app.post('/post', (req, res) => {
-    if (req.isAuthenticated()){
+    if (req.isAuthenticated()) {
 
     }
 });
-// app.listen(3085, () => {
-//     console.log('백엔드 서버에서 작동중');
-// });
+app.listen(3085, () => {
+    console.log('백엔드 서버에서 작동중');
+});
