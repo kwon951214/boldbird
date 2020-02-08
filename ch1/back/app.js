@@ -7,8 +7,8 @@ const morgan = require('morgan');
 
 const db = require('./models');
 const passportConfig = require('./passport');
-// const userRouter = require('./routes/user');
-// const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
+const postRouter = require('./routes/post');
 const app = express();
 
 db.sequelize.sync();
@@ -39,8 +39,8 @@ app.get('/', (req, res) => {
     res.status(200).send('안녕 제로초');
 });
 
-// app.use('/user', userRouter);
-// app.use('/post', postRouter);
+app.use('/user', userRouter);
+app.use('/post', postRouter);
 
 app.post('/post', (req, res) => {
     if (req.isAuthenticated()) {
