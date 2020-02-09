@@ -7,12 +7,12 @@ const morgan = require('morgan');
 
 const db = require('./models');
 const passportConfig = require('./passport');
-const userRouter = require('./routes/user');
-const postRouter = require('./routes/post');
+// const userRouter = require('./routes/user');
+// const postRouter = require('./routes/post');
 const app = express();
 
 db.sequelize.sync();
-// passportConfig();
+ passportConfig();
 
 app.use(morgan('dev'));
 app.use(cors({
